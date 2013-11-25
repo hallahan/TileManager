@@ -17,18 +17,13 @@ public class HTTPTileSet extends TileSet {
     private final Pattern Z_TOKEN = Pattern.compile("\\{z\\}"); // \\ is special esc char for regex
     private final Pattern X_TOKEN = Pattern.compile("\\{x\\}");
     private final Pattern Y_TOKEN = Pattern.compile("\\{y\\}");
+    
     /**
      * Format strings for fetching tiles should follow the following format:
      * http://tile.openstreetmap.org/{z}/{x}/{y}.png
      */
     private String httpFormatString;
-    /**
-     * These are the regex matches in the httpForatString for each z,x,y
-     * parameter. This is used by urlForTile.
-     */
-    private Matcher zMatch;
-    private Matcher xMatch;
-    private Matcher yMatch;
+
 
     public HTTPTileSet(String httpFormatString) {
         setHttpFormatString(httpFormatString);
@@ -44,9 +39,14 @@ public class HTTPTileSet extends TileSet {
         int z = tile.getZ();
         int x = tile.getX();
         int y = tile.getY();
-
+        
+        Matcher zMatch = Z_TOKEN.matcher(httpFormatString);
         String url = zMatch.replaceAll(String.valueOf(z));
+        
+        Matcher xMatch = X_TOKEN.matcher(url);
         url = xMatch.replaceAll(String.valueOf(x));
+        
+        Matcher yMatch = Y_TOKEN.matcher(url);
         url = yMatch.replaceAll(String.valueOf(y));
 
         return url;
@@ -60,7 +60,7 @@ public class HTTPTileSet extends TileSet {
     }
 
     /**
-     * This sets the format string and initializes the matchers to process the
+     * This sets the format string used to process the
      * URL for a given tile. This method is private, because changing the HTTP
      * format string in media res would put the tile set in an inconsistent
      * state. We would think older tiles came from the newer place when that
@@ -70,9 +70,5 @@ public class HTTPTileSet extends TileSet {
      */
     private void setHttpFormatString(String httpFormatString) {
         this.httpFormatString = httpFormatString;
-
-        zMatch = Z_TOKEN.matcher(getHttpFormatString());
-        xMatch = X_TOKEN.matcher(getHttpFormatString());
-        yMatch = Y_TOKEN.matcher(getHttpFormatString());
     }
 }
