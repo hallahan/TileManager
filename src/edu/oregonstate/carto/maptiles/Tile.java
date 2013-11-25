@@ -13,13 +13,14 @@ public abstract class Tile<TileData> {
     
     /**
      * Tiles are almost always 256px x 256px.
+     * TODO: Do we want to change this ever?
      */
-    protected int tileSize = 256;
+    protected final int tileSize = 256;
     
     /**
      * A tile needs to be in a set so it can find its neighbors.
      */
-    private TileSet tileSet;
+    protected TileSet tileSet;
 
     
     public Tile(TileSet tileSet, int z, int x, int y) {

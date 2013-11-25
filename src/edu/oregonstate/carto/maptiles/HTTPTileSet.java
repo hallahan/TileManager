@@ -1,6 +1,9 @@
 package edu.oregonstate.carto.maptiles;
 
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,7 +11,7 @@ import java.util.regex.Pattern;
  *
  * @author Nicholas Hallahan nick@theoutpost.io
  */
-public class HTTPTileSet extends TileSet {
+public class HTTPTileSet<TileData> extends TileSet {
 
     /**
      * Patterns used for replacing z, x, y formatting tokens to create a valid
@@ -33,23 +36,29 @@ public class HTTPTileSet extends TileSet {
      * Constructs the URL corresponding to a given tile.
      *
      * @param tile
-     * @return String URL of a tile.
+     * @return URL of a tile.
      */
-    public String urlForTile(Tile tile) {
-        int z = tile.getZ();
-        int x = tile.getX();
-        int y = tile.getY();
-        
-        Matcher zMatch = Z_TOKEN.matcher(httpFormatString);
-        String url = zMatch.replaceAll(String.valueOf(z));
-        
-        Matcher xMatch = X_TOKEN.matcher(url);
-        url = xMatch.replaceAll(String.valueOf(x));
-        
-        Matcher yMatch = Y_TOKEN.matcher(url);
-        url = yMatch.replaceAll(String.valueOf(y));
+    @Override
+    public URL urlForTile(Tile tile) {
+        try {
+            int z = tile.getZ();
+            int x = tile.getX();
+            int y = tile.getY();
+            
+            Matcher zMatch = Z_TOKEN.matcher(httpFormatString);
+            String urlStr = zMatch.replaceAll(String.valueOf(z));
+            
+            Matcher xMatch = X_TOKEN.matcher(urlStr);
+            urlStr = xMatch.replaceAll(String.valueOf(x));
+            
+            Matcher yMatch = Y_TOKEN.matcher(urlStr);
+            urlStr = yMatch.replaceAll(String.valueOf(y));
 
-        return url;
+            return new URL(urlStr);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(HTTPTileSet.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 
     /**
@@ -71,4 +80,23 @@ public class HTTPTileSet extends TileSet {
     private void setHttpFormatString(String httpFormatString) {
         this.httpFormatString = httpFormatString;
     }
+
+    /**
+     * This method should only be called by Tile objects. It fetches the tile
+     * data via the corresponding protocol (HTTP or file).
+     * @param tile
+     * @return BufferedImage or Grid (depending on the type of tile)
+     */
+    
+//    NH Maybe the data should be fetched by the tile, because
+//    the tile may be an image or grid, and those are handled differently
+//    @Override
+//    TileData fetch(Tile tile) {
+//        try {
+//            URL url = urlForTile(tile);
+//            return ImageIO.read(url);
+//        } catch (MalformedURLException ex) {
+//            Logger.getLogger(HTTPTileSet.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
 }

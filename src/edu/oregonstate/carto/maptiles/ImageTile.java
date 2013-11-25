@@ -3,6 +3,11 @@ package edu.oregonstate.carto.maptiles;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -10,13 +15,27 @@ import java.awt.image.BufferedImage;
  */
 public class ImageTile extends Tile {
     
+    /**
+     * The BufferedImage that is the raster data of this tile.
+     * This in memory field is populated by fetch()
+     */
+    private BufferedImage img;
+    
     public ImageTile(TileSet tileSet, int z, int x, int y) {
         super(tileSet, z,x,y);
     }
 
     @Override
     public BufferedImage fetch() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (img == null) {
+            URL url = tileSet.urlForTile(this);
+            try {
+                img = ImageIO.read(url);
+            } catch (IOException ex) {
+                Logger.getLogger(ImageTile.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return img;
     }
 
     @Override
