@@ -1,4 +1,4 @@
-package edu.oregonstate.carto.maptiles;
+package edu.oregonstate.carto.tilemanager;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  *
  * @author Nicholas Hallahan nick@theoutpost.io
  */
-public class HTTPTileSet<TileData> extends TileSet {
+public class HTTPTileSet extends TileSet {
 
     /**
      * Patterns used for replacing z, x, y formatting tokens to create a valid

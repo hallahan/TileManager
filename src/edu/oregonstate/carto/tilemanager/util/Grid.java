@@ -1,4 +1,4 @@
-package edu.oregonstate.carto.maptiles.util;
+package edu.oregonstate.carto.tilemanager.util;
 
 import java.awt.geom.*;
 import java.text.DecimalFormat;

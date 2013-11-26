@@ -1,5 +1,10 @@
 package edu.oregonstate.carto.maptiles;
 
+import edu.oregonstate.carto.tilemanager.HTTPTileSet;
+import edu.oregonstate.carto.tilemanager.ImageTile;
+import edu.oregonstate.carto.tilemanager.Tile;
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -36,13 +41,13 @@ public class HTTPTileSetTest {
      * Test of urlForTile method, of class HTTPTileSet.
      */
     @Test
-    public void testUrlForTile() {
+    public void testUrlForTile() throws MalformedURLException {
         System.out.println("urlForTile");
         
         HTTPTileSet tileSet = new HTTPTileSet("http://tile.openstreetmap.org/{z}/{x}/{y}.png");
         Tile tile = new ImageTile(tileSet, 8, 42, 95);
-        String expResult = "http://tile.openstreetmap.org/8/42/95.png";
-        String result = tileSet.urlForTile(tile);
+        String expResult = new URL("http://tile.openstreetmap.org/8/42/95.png").toString();
+        String result = tileSet.urlForTile(tile).toString();
         assertEquals(expResult, result);
     }
 

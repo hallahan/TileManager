@@ -1,6 +1,6 @@
-package edu.oregonstate.carto.maptiles;
+package edu.oregonstate.carto.tilemanager;
 
-import edu.oregonstate.carto.maptiles.util.Grid;
+import edu.oregonstate.carto.tilemanager.util.Grid;
 
 /**
  *
