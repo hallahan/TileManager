@@ -12,11 +12,11 @@ public abstract class Tile<TileData> {
     private final int z, x, y;
     
     /**
-     * z, x, y packed into a long integer. This functions as a content
+     * z, x, y packed into a Long. This functions as a content
      * addressable, unique value used to identify a tile based on the
      * z, x, y address space.
      */
-    private long hashKey = 0;
+    private Long key;
     
     /**
      * Tiles are always 256px x 256px.
@@ -99,16 +99,16 @@ public abstract class Tile<TileData> {
      * 
      * @return hash key as a packed long integer
      */
-    public long getHashKey() {
-        if (hashKey != 0) return hashKey;
+    public Long getKey() {
+        if (key != null) return key;
         
         long zL = (long) this.z;
         long xL = (long) this.x;
         long yL = (long) this.y;
         
-        hashKey = yL | (xL << 28) | (zL << 56);
+        key = new Long( yL | (xL << 28) | (zL << 56) );
         
-        return hashKey;
+        return key;
     }
     
     
@@ -120,10 +120,10 @@ public abstract class Tile<TileData> {
      * @param hashKey
      * @return [z, x, y] array
      */
-    public static int[] getZXYFromHashKey(long hashKey) {
-        int z = (int) ((hashKey >> 56) & 0xFFFFFFF); // 7 Fs means we have 7 nibbles
-        int x = (int) ((hashKey >> 28) & 0xFFFFFFF);
-        int y = (int) (hashKey & 0xFFFFFFF);
+    public static int[] getZXYFromKey(long key) {
+        int z = (int) ((key >> 56) & 0xFFFFFFF); // 7 Fs means we have 7 nibbles
+        int x = (int) ((key >> 28) & 0xFFFFFFF);
+        int y = (int) (key & 0xFFFFFFF);
         
         int[] zxy = {z, x, y};
         return zxy;
