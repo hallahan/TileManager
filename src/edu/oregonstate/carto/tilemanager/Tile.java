@@ -85,9 +85,9 @@ public abstract class Tile<TileData> {
 
 
     /**
-     * When referencing a tile from a HashMap, the tile must be content
+     * When referencing a tile from a Cache, the tile must be content
      * addressable based on the z, x, y coordinates. This is achieved by
-     * packing these values into a long integer. This method is guaranteed
+     * packing these values into a Long. This method is guaranteed
      * to return a unique value for all z, x, y values within the following
      * range:
      * 
@@ -113,17 +113,18 @@ public abstract class Tile<TileData> {
     
     
     /**
-     * This is a convenience function that extracts the z, x, y values from
-     * a hash key. This is a long integer that has the z, x, y values bit
+     * This extracts the z, x, y values from a hash key. 
+     * This is a long integer that has the z, x, y values bit
      * packed into it.
      * 
      * @param hashKey
      * @return [z, x, y] array
      */
-    public static int[] getZXYFromKey(long key) {
-        int z = (int) ((key >> 56) & 0xFFFFFFF); // 7 Fs means we have 7 nibbles
-        int x = (int) ((key >> 28) & 0xFFFFFFF);
-        int y = (int) (key & 0xFFFFFFF);
+    public static int[] getZXYFromKey(Long key) {
+        long k = key.longValue();
+        int z = (int) ((k >> 56) & 0xFFFFFFF); // 7 Fs means we have 7 nibbles
+        int x = (int) ((k >> 28) & 0xFFFFFFF);
+        int y = (int) (k & 0xFFFFFFF);
         
         int[] zxy = {z, x, y};
         return zxy;

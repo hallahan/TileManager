@@ -6,13 +6,17 @@ package edu.oregonstate.carto.tilemanager;
  */
 public class TMSTileSchema extends TileSchema {
 
+    public TMSTileSchema(Cache cache) {
+        super(cache);
+    }
+    
     @Override
     public Tile getTopLeftTile(Tile tile) {
         int x = tile.getX() - 1;
         int y = tile.getY() + 1;
         int z = tile.getZ();
         
-        return null;
+        return cache.get(z, x, y);
     }
 
     @Override
@@ -21,7 +25,7 @@ public class TMSTileSchema extends TileSchema {
         int y = tile.getY() + 1;
         int z = tile.getZ();
         
-        return null;
+        return cache.get(z, x, y);
     }
 
     @Override
@@ -30,7 +34,7 @@ public class TMSTileSchema extends TileSchema {
         int y = tile.getY() + 1;
         int z = tile.getZ();
         
-        return null;
+        return cache.get(z, x, y);
     }
 
     @Override
@@ -39,7 +43,7 @@ public class TMSTileSchema extends TileSchema {
         int y = tile.getY();
         int z = tile.getZ();
         
-        return null;
+        return cache.get(z, x, y);
     }
 
     @Override
@@ -48,7 +52,7 @@ public class TMSTileSchema extends TileSchema {
         int y = tile.getY();
         int z = tile.getZ();
         
-        return null;
+        return cache.get(z, x, y);
     }
 
     @Override
@@ -57,7 +61,7 @@ public class TMSTileSchema extends TileSchema {
         int y = tile.getY() - 1;
         int z = tile.getZ();
         
-        return null;
+        return cache.get(z, x, y);
     }
 
     @Override
@@ -66,7 +70,7 @@ public class TMSTileSchema extends TileSchema {
         int y = tile.getY() - 1;
         int z = tile.getZ();
         
-        return null;
+        return cache.get(z, x, y);
     }
 
     @Override
@@ -75,6 +79,6 @@ public class TMSTileSchema extends TileSchema {
         int y = tile.getY() - 1;
         int z = tile.getZ();
         
-        return null;
+        return cache.get(z, x, y);
     }
 }

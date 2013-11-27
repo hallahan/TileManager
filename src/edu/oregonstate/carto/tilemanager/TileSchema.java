@@ -8,18 +8,19 @@ package edu.oregonstate.carto.tilemanager;
  */
 public abstract class TileSchema {
 
-    public abstract TileCoord getTopLeftTile(int z, int x, int y);
-    public abstract TileCoord getTopTile(int z, int x, int y);
-    public abstract TileCoord getTopRightTile(int z, int x, int y);
-    public abstract TileCoord getLeftTile(int z, int x, int y);
-    public abstract TileCoord getRightTile(int z, int x, int y);
-    public abstract TileCoord getBottomLeftTile(int z, int x, int y);
-    public abstract TileCoord getBottomTile(int z, int x, int y);
-    public abstract TileCoord getBottomRightTile(int z, int x, int y);
+    Cache cache;
     
-    class TileCoord {
-        public int z;
-        public int x;
-        public int y;
+    public TileSchema(Cache cache) {
+        this.cache = cache;
     }
+    
+    public abstract Tile getTopLeftTile(Tile tile);
+    public abstract Tile getTopTile(Tile tile);
+    public abstract Tile getTopRightTile(Tile tile);
+    public abstract Tile getLeftTile(Tile tile);
+    public abstract Tile getRightTile(Tile tile);
+    public abstract Tile getBottomLeftTile(Tile tile);
+    public abstract Tile getBottomTile(Tile tile);
+    public abstract Tile getBottomRightTile(Tile tile);
+    
 }

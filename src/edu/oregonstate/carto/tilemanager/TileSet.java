@@ -10,12 +10,14 @@ public abstract class TileSet {
 
     private TileSchema tileSchema;
     
+    private Cache cache = Cache.singleton();
+    
     /**
      * Almost all tile sets on the internet use Google Tile schema,
      * including OpenStreetMap, MapQuest, MapBox, and Esri.
      */
     public TileSet() {
-        this(new GoogleTileSchema());
+        tileSchema = new GoogleTileSchema(cache);
     }
     
     /**
@@ -27,7 +29,7 @@ public abstract class TileSet {
      * @param schema 
      */
     public TileSet(TileSchema schema) {
-        this.tileSchema = schema;
+        tileSchema = schema;
     }
     
     /**
@@ -42,6 +44,39 @@ public abstract class TileSet {
     
     public TileSchema getTileSchema() {
         return tileSchema;
+    }
+    
+    
+    public Tile getTopLeftTile(Tile tile) {
+        return tileSchema.getTopLeftTile(tile);
+    }
+
+    public Tile getTopTile(Tile tile) {
+        return tileSchema.getTopTile(tile);
+    }
+
+    public Tile getTopRightTile(Tile tile) {
+        return tileSchema.getTopRightTile(tile);
+    }
+
+    public Tile getLeftTile(Tile tile) {
+        return tileSchema.getLeftTile(tile);
+    }
+
+    public Tile getRightTile(Tile tile) {
+        return tileSchema.getRightTile(tile);
+    }
+
+    public Tile getBottomLeftTile(Tile tile) {
+        return tileSchema.getBottomLeftTile(tile);
+    }
+
+    public Tile getBottomTile(Tile tile) {
+        return tileSchema.getBottomTile(tile);
+    }
+
+    public Tile getBottomRightTile(Tile tile) {
+        return tileSchema.getBottomRightTile(tile);
     }
     
 }
