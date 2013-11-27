@@ -20,13 +20,11 @@ public class HTTPTileSet extends TileSet {
     private final Pattern Z_TOKEN = Pattern.compile("\\{z\\}"); // \\ is special esc char for regex
     private final Pattern X_TOKEN = Pattern.compile("\\{x\\}");
     private final Pattern Y_TOKEN = Pattern.compile("\\{y\\}");
-    
     /**
      * Format strings for fetching tiles should follow the following format:
      * http://tile.openstreetmap.org/{z}/{x}/{y}.png
      */
     private String httpFormatString;
-
 
     public HTTPTileSet(String httpFormatString) {
         setHttpFormatString(httpFormatString);
@@ -40,17 +38,22 @@ public class HTTPTileSet extends TileSet {
      */
     @Override
     public URL urlForTile(Tile tile) {
+        int z = tile.getZ();
+        int x = tile.getX();
+        int y = tile.getY();
+
+        return urlForZXY(z, x, y);
+    }
+
+    @Override
+    public URL urlForZXY(int z, int x, int y) {
         try {
-            int z = tile.getZ();
-            int x = tile.getX();
-            int y = tile.getY();
-            
             Matcher zMatch = Z_TOKEN.matcher(httpFormatString);
             String urlStr = zMatch.replaceAll(String.valueOf(z));
-            
+
             Matcher xMatch = X_TOKEN.matcher(urlStr);
             urlStr = xMatch.replaceAll(String.valueOf(x));
-            
+
             Matcher yMatch = Y_TOKEN.matcher(urlStr);
             urlStr = yMatch.replaceAll(String.valueOf(y));
 
@@ -69,25 +72,23 @@ public class HTTPTileSet extends TileSet {
     }
 
     /**
-     * This sets the format string used to process the
-     * URL for a given tile. This method is private, because changing the HTTP
-     * format string in media res would put the tile set in an inconsistent
-     * state. We would think older tiles came from the newer place when that
-     * would not be true.
+     * This sets the format string used to process the URL for a given tile.
+     * This method is private, because changing the HTTP format string in media
+     * res would put the tile set in an inconsistent state. We would think older
+     * tiles came from the newer place when that would not be true.
      *
      * @param httpFormatString the httpFormatString to set
      */
     private void setHttpFormatString(String httpFormatString) {
         this.httpFormatString = httpFormatString;
     }
-
     /**
      * This method should only be called by Tile objects. It fetches the tile
      * data via the corresponding protocol (HTTP or file).
+     *
      * @param tile
      * @return BufferedImage or Grid (depending on the type of tile)
      */
-    
 //    NH Maybe the data should be fetched by the tile, because
 //    the tile may be an image or grid, and those are handled differently
 //    @Override

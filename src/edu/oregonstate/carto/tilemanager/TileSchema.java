@@ -1,5 +1,7 @@
 package edu.oregonstate.carto.tilemanager;
 
+import java.net.URL;
+
 /**
  * Java is not letting me have abstract static methods, so I am faking it. The
  * subclass will override these static methods.
@@ -8,19 +10,19 @@ package edu.oregonstate.carto.tilemanager;
  */
 public abstract class TileSchema {
 
-    Cache cache;
+    TileSet tileSet;
     
-    public TileSchema(Cache cache) {
-        this.cache = cache;
+    public TileSchema(TileSet tileSet) {
+        this.tileSet = tileSet;
     }
     
-    public abstract Tile getTopLeftTile(Tile tile);
-    public abstract Tile getTopTile(Tile tile);
-    public abstract Tile getTopRightTile(Tile tile);
-    public abstract Tile getLeftTile(Tile tile);
-    public abstract Tile getRightTile(Tile tile);
-    public abstract Tile getBottomLeftTile(Tile tile);
-    public abstract Tile getBottomTile(Tile tile);
-    public abstract Tile getBottomRightTile(Tile tile);
+    public abstract URL getTopLeftTile(Tile tile);
+    public abstract URL getTopTile(Tile tile);
+    public abstract URL getTopRightTile(Tile tile);
+    public abstract URL getLeftTile(Tile tile);
+    public abstract URL getRightTile(Tile tile);
+    public abstract URL getBottomLeftTile(Tile tile);
+    public abstract URL getBottomTile(Tile tile);
+    public abstract URL getBottomRightTile(Tile tile);
     
 }

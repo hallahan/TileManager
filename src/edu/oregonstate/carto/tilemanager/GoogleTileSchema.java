@@ -1,84 +1,86 @@
 package edu.oregonstate.carto.tilemanager;
 
+import java.net.URL;
+
 /**
  *
  * @author Nicholas Hallahan nick@theoutpost.io
  */
 public class GoogleTileSchema extends TileSchema {
 
-    public GoogleTileSchema(Cache cache) {
-        super(cache);
+    public GoogleTileSchema(TileSet tileSet) {
+        super(tileSet);
     }
     
     @Override
-    public Tile getTopLeftTile(Tile tile) {
+    public URL getTopLeftTile(Tile tile) {
         int x = tile.getX() - 1;
         int y = tile.getY() - 1;
         int z = tile.getZ();
         
-        return cache.get(z, x, y);
+        return tileSet.urlForZXY(z, x, y);
     }
 
     @Override
-    public Tile getTopTile(Tile tile) {
+    public URL getTopTile(Tile tile) {
         int x = tile.getX();
         int y = tile.getY() - 1;
         int z = tile.getZ();
         
-        return cache.get(z, x, y);
+        return tileSet.urlForZXY(z, x, y);
     }
 
     @Override
-    public Tile getTopRightTile(Tile tile) {
+    public URL getTopRightTile(Tile tile) {
         int x = tile.getX() + 1;
         int y = tile.getY() - 1;
         int z = tile.getZ();
         
-        return cache.get(z, x, y);
+        return tileSet.urlForZXY(z, x, y);
     }
 
     @Override
-    public Tile getLeftTile(Tile tile) {
+    public URL getLeftTile(Tile tile) {
         int x = tile.getX() - 1;
         int y = tile.getY();
         int z = tile.getZ();
         
-        return cache.get(z, x, y);
+        return tileSet.urlForZXY(z, x, y);
     }
 
     @Override
-    public Tile getRightTile(Tile tile) {
+    public URL getRightTile(Tile tile) {
         int x = tile.getX() + 1;
         int y = tile.getY();
         int z = tile.getZ();
         
-        return cache.get(z, x, y);
+        return tileSet.urlForZXY(z, x, y);
     }
 
     @Override
-    public Tile getBottomLeftTile(Tile tile) {
+    public URL getBottomLeftTile(Tile tile) {
         int x = tile.getX() - 1;
         int y = tile.getY() + 1;
         int z = tile.getZ();
         
-        return cache.get(z, x, y);
+        return tileSet.urlForZXY(z, x, y);
     }
 
     @Override
-    public Tile getBottomTile(Tile tile) {
+    public URL getBottomTile(Tile tile) {
         int x = tile.getX();
         int y = tile.getY() + 1;
         int z = tile.getZ();
         
-        return cache.get(z, x, y);
+        return tileSet.urlForZXY(z, x, y);
     }
 
     @Override
-    public Tile getBottomRightTile(Tile tile) {
+    public URL getBottomRightTile(Tile tile) {
         int x = tile.getX() + 1;
         int y = tile.getY() + 1;
         int z = tile.getZ();
         
-        return cache.get(z, x, y);
+        return tileSet.urlForZXY(z, x, y);
     }
 }

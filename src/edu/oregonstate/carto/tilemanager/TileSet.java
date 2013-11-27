@@ -17,7 +17,7 @@ public abstract class TileSet {
      * including OpenStreetMap, MapQuest, MapBox, and Esri.
      */
     public TileSet() {
-        tileSchema = new GoogleTileSchema(cache);
+        tileSchema = new GoogleTileSchema(this);
     }
     
     /**
@@ -37,10 +37,19 @@ public abstract class TileSet {
      * the file system as well as from HTTP.
      * 
      * @param tile
-     * @return
+     * @return URL
      */
     public abstract URL urlForTile(Tile tile);
     
+    /**
+     * Returns a properly formatted URL for tile coordinates (z, x, y).
+     * 
+     * @param z
+     * @param x
+     * @param y
+     * @return URL
+     */
+    public abstract URL urlForZXY(int z, int x, int y);
     
     public TileSchema getTileSchema() {
         return tileSchema;
@@ -48,35 +57,43 @@ public abstract class TileSet {
     
     
     public Tile getTopLeftTile(Tile tile) {
-        return tileSchema.getTopLeftTile(tile);
+        URL url = tileSchema.getTopLeftTile(tile);
+        return cache.get(url);
     }
 
     public Tile getTopTile(Tile tile) {
-        return tileSchema.getTopTile(tile);
+        URL url = tileSchema.getTopTile(tile);
+        return cache.get(url);
     }
 
     public Tile getTopRightTile(Tile tile) {
-        return tileSchema.getTopRightTile(tile);
+        URL url = tileSchema.getTopRightTile(tile);
+        return cache.get(url);
     }
 
     public Tile getLeftTile(Tile tile) {
-        return tileSchema.getLeftTile(tile);
+        URL url = tileSchema.getLeftTile(tile);
+        return cache.get(url);
     }
 
     public Tile getRightTile(Tile tile) {
-        return tileSchema.getRightTile(tile);
+        URL url = tileSchema.getRightTile(tile);
+        return cache.get(url);
     }
 
     public Tile getBottomLeftTile(Tile tile) {
-        return tileSchema.getBottomLeftTile(tile);
+        URL url = tileSchema.getBottomLeftTile(tile);
+        return cache.get(url);
     }
 
     public Tile getBottomTile(Tile tile) {
-        return tileSchema.getBottomTile(tile);
+        URL url = tileSchema.getBottomTile(tile);
+        return cache.get(url);
     }
 
     public Tile getBottomRightTile(Tile tile) {
-        return tileSchema.getBottomRightTile(tile);
+        URL url = tileSchema.getBottomRightTile(tile);
+        return cache.get(url);
     }
     
 }
