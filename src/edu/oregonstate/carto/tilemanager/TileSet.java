@@ -92,6 +92,14 @@ public abstract class TileSet {
         return urlForZXY(z, x, y);
     }
 
+    public URL urlForTileCoord(TileCoord coord) {
+        int z = coord.Z;
+        int x = coord.X;
+        int y = coord.Y;
+        
+        return urlForZXY(z, x, y);
+    }
+    
     /**
      * Returns a properly formatted URL for tile coordinates (z, x, y).
      *
@@ -120,6 +128,10 @@ public abstract class TileSet {
         }
         return new ImageTile(this, z, x, y);
     }
+    
+    private Tile createTile(TileCoord coord) {
+        return createTile(coord.Z, coord.X, coord.Y);
+    }
 
     /**
      * Gets the tile with the corresponding coordinates from the cache. If not,
@@ -129,10 +141,10 @@ public abstract class TileSet {
      * @return the tile we are looking for
      */
     private Tile retrieveTile(TileCoord coord) {
-        URL url = urlForZXY(coord.Z, coord.X, coord.Y);
+        URL url = urlForTileCoord(coord);
         Tile t = cache.get(url);
         if (t == null) {
-            t = createTile(coord.Z, coord.X, coord.Y);
+            t = createTile(coord);
             cache.put(url, t);
         }
         return t;

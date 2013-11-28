@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -22,7 +23,7 @@ public class BinaryGridReader {
     /**
      * Read a Grid from a file in ESRI ASCII format.
      *
-     * @param fileName The path to the file to be read.
+     * @param filePath The path to the file to be read.
      * @return The read grid.
      */
     public static Grid read(String filePath)
@@ -31,6 +32,19 @@ public class BinaryGridReader {
         InputStream fis = new FileInputStream(file.getAbsolutePath());
         BufferedInputStream bis = new BufferedInputStream(fis, BYTES_TO_READ);
         return BinaryGridReader.read(bis);
+    }
+    
+    /**
+     * Read a Grid from a URL that is in ESRI ASCII format.
+     * 
+     * @param url
+     * @return The read grid.
+     * @throws IOException 
+     */
+    public static Grid read(URL url) throws IOException {
+        InputStream is = url.openStream();
+        BufferedInputStream bis = new BufferedInputStream(is, BYTES_TO_READ);
+        return read(bis);
     }
 
     /**
