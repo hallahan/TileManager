@@ -24,25 +24,10 @@ public class HTTPTileSet extends TileSet {
      * Format strings for fetching tiles should follow the following format:
      * http://tile.openstreetmap.org/{z}/{x}/{y}.png
      */
-    private String httpFormatString;
+    private final String httpFormatString;
 
     public HTTPTileSet(String httpFormatString) {
-        setHttpFormatString(httpFormatString);
-    }
-
-    /**
-     * Constructs the URL corresponding to a given tile.
-     *
-     * @param tile
-     * @return URL of a tile.
-     */
-    @Override
-    public URL urlForTile(Tile tile) {
-        int z = tile.getZ();
-        int x = tile.getX();
-        int y = tile.getY();
-
-        return urlForZXY(z, x, y);
+        this.httpFormatString = httpFormatString;
     }
 
     @Override
@@ -69,18 +54,6 @@ public class HTTPTileSet extends TileSet {
      */
     public String getHttpFormatString() {
         return httpFormatString;
-    }
-
-    /**
-     * This sets the format string used to process the URL for a given tile.
-     * This method is private, because changing the HTTP format string in media
-     * res would put the tile set in an inconsistent state. We would think older
-     * tiles came from the newer place when that would not be true.
-     *
-     * @param httpFormatString the httpFormatString to set
-     */
-    private void setHttpFormatString(String httpFormatString) {
-        this.httpFormatString = httpFormatString;
     }
 
 }
