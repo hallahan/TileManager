@@ -13,7 +13,6 @@ public abstract class TileSet {
      * tiles, we need to know which type of tile to construct.
      */
     public enum TileType {
-
         IMAGE, GRID
     }
     /**

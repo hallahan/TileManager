@@ -26,10 +26,59 @@ public class HTTPTileSet extends TileSet {
      */
     private final String httpFormatString;
 
+    /**
+     * Creates a standard HTTPTileSet with the given format string.
+     * 
+     * Format strings for fetching tiles should follow the following format:
+     * http://tile.openstreetmap.org/{z}/{x}/{y}.png
+     * 
+     * @param httpFormatString 
+     */
     public HTTPTileSet(String httpFormatString) {
+        super();
         this.httpFormatString = httpFormatString;
     }
 
+    /**
+     * You can specify a TMS tile schema by passing in a TMSTileSchema object.
+     * For example:
+     *
+     * new HTTPTileSet(formatString, new TMSTileSchema());
+     *
+     * The tile type is image by default.
+     *
+     * @param httpFormatString 
+     * @param schema
+     */
+    public HTTPTileSet(String httpFormatString, TileSchema schema) {
+        super(schema);
+        this.httpFormatString = httpFormatString;
+    }
+
+    /**
+     * You can specify the type of tile: IMAGE or GRID. This constructor sets
+     * the schema to GoogleTile by default.
+     *
+     * @param httpFormatString
+     * @param type
+     */
+    public HTTPTileSet(String httpFormatString, TileType type) {
+        super(type);
+        this.httpFormatString = httpFormatString;
+    }
+
+    /**
+     * This constructor explicitly sets both the type and schema.
+     *
+     * @param httpFormatString 
+     * @param schema
+     * @param type
+     */
+    public HTTPTileSet(String httpFormatString, TileSchema schema, TileType type) {
+        super(schema, type);
+        this.httpFormatString = httpFormatString;
+    }
+    
     @Override
     public URL urlForZXY(int z, int x, int y) {
         try {

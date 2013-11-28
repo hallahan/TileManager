@@ -12,34 +12,82 @@ import java.util.logging.Logger;
  */
 public class FileTileSet extends TileSet {
 
-    private final String rootDirectory;
+    private URL rootDirectory = null;
 
-    public FileTileSet(String rootDirectory) {
-        File dir = new File(rootDirectory);
-        if (!dir.isDirectory()) {
-            throw new IllegalArgumentException(rootDirectory + " is not a directory");
-        }
-        int len = rootDirectory.length();
-        char lastChar = rootDirectory.charAt(len - 1);
-        if (lastChar == '/' || lastChar == '\\') {
-            rootDirectory = rootDirectory.substring(0, len - 1);
-        }
-        this.rootDirectory = rootDirectory;
+    /**
+     * Pass in the root directory that your tile set lives in on your local
+     * file system. Example:
+     *      Example:
+     *      "C:\\Users\\nick\\Documents\\TMS_tiles_MountHood\\buildingMask"
+     * 
+     *      or
+     * 
+     *      "C:/Users/nick/Documents/TMS_tiles_MountHood/buildingMask"
+     * 
+     *      or
+     * 
+     *      "/some/unix/directory/path"
+     * 
+     * @param rootDir
+     * @throws MalformedURLException 
+     */
+    public FileTileSet(String rootDir) throws MalformedURLException {
+        this.rootDirectory = new File(rootDir).toURI().toURL();
+    }
+    
+
+    /**
+     * You can specify a TMS tile schema by passing in a TMSTileSchema object.
+     * For example:
+     *
+     * new FileTileSet(formatString, new TMSTileSchema());
+     *
+     * The tile type is image by default.
+     *
+     * @param rootDir 
+     * @param schema
+     */
+    public FileTileSet(String rootDir, TileSchema schema) throws MalformedURLException {
+        super(schema);
+        this.rootDirectory = new File(rootDir).toURI().toURL();
+    }
+
+    /**
+     * You can specify the type of tile: IMAGE or GRID. This constructor sets
+     * the schema to GoogleTile by default.
+     *
+     * @param rootDir
+     * @param type
+     */
+    public FileTileSet(String rootDir, TileType type) throws MalformedURLException {
+        super(type);
+        this.rootDirectory = new File(rootDir).toURI().toURL();
+    }
+
+    /**
+     * This constructor explicitly sets both the type and schema.
+     *
+     * @param rootDir 
+     * @param schema
+     * @param type
+     */
+    public FileTileSet(String rootDir, TileSchema schema, TileType type) throws MalformedURLException {
+        super(schema, type);
+        this.rootDirectory = new File(rootDir).toURI().toURL();
     }
 
     @Override
     public URL urlForZXY(int z, int x, int y) {
         try {
-            String urlStr = rootDirectory;
-
-            return new URL(urlStr);
-        } catch (MalformedURLException ex) {
+            return new URL(rootDirectory, z + "/" + x + "/" + y + ".png");
+        } catch (MalformedURLException ex) { // NH unlikely to happen
             Logger.getLogger(HTTPTileSet.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }
 
-    public String getRootDirectory() {
+    public URL getRootDirectory() {
         return rootDirectory;
     }
+    
 }
