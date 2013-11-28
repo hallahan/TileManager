@@ -11,12 +11,6 @@ public abstract class Tile<TileData> {
      */
     private final int z, x, y;
     
-    /**
-     * z, x, y packed into a Long. This functions as a content
-     * addressable, unique value used to identify a tile based on the
-     * z, x, y address space.
-     */
-    private Long key;
     
     /**
      * Tiles are always 256px x 256px.
@@ -51,86 +45,38 @@ public abstract class Tile<TileData> {
     public abstract TileData createMegaTile();
     
     public Tile getTopLeftTile() {
-//        return tileSet.getTopLeftTile(this);
-        return null;
+        return tileSet.getTopLeftTile(this);
     }
 
     public Tile getTopTile() {
-        return null;
+        return tileSet.getTopTile(this);
     }
 
     public Tile getTopRightTile() {
-        return null;
+        return tileSet.getTopRightTile(this);
     }
 
     public Tile getLeftTile() {
-        return null;
+        return tileSet.getLeftTile(this);
     }
 
     public Tile getRightTile() {
-        return null;
+        return tileSet.getRightTile(this);
     }
 
     public Tile getBottomLeftTile() {
-        return null;
+        return tileSet.getBottomLeftTile(this);
     }
 
     public Tile getBottomTile() {
-        return null;
+        return tileSet.getBottomTile(this);
     }
 
     public Tile getBottomRightTile() {
-        return null;
+        return tileSet.getBottomRightTile(this);
     }
 
 
-    /**
-     * When referencing a tile from a Cache, the tile must be content
-     * addressable based on the z, x, y coordinates. This is achieved by
-     * packing these values into a Long. This method is guaranteed
-     * to return a unique value for all z, x, y values within the following
-     * range:
-     * 
-     *      z: 1 - 127         (1 byte or 8 bits) Zoom is at least 1.
-     *      x: 0 - 134217727   (7 nibbles or 28 bits)
-     *      Y: 0 - 134217727   (7 nibbles or 28 bits)
-     * 
-     * All of this results in 64 bits, the size of a long integer.
-     * 
-     * @return hash key as a packed long integer
-     */
-    public Long getKey() {
-        if (key != null) return key;
-        
-        long zL = (long) this.z;
-        long xL = (long) this.x;
-        long yL = (long) this.y;
-        
-        key = new Long( yL | (xL << 28) | (zL << 56) );
-        
-        return key;
-    }
-    
-    
-    /**
-     * This extracts the z, x, y values from a hash key. 
-     * This is a long integer that has the z, x, y values bit
-     * packed into it.
-     * 
-     * @param hashKey
-     * @return [z, x, y] array
-     */
-    public static int[] getZXYFromKey(Long key) {
-        long k = key.longValue();
-        int z = (int) ((k >> 56) & 0xFFFFFFF); // 7 Fs means we have 7 nibbles
-        int x = (int) ((k >> 28) & 0xFFFFFFF);
-        int y = (int) (k & 0xFFFFFFF);
-        
-        int[] zxy = {z, x, y};
-        return zxy;
-    }
-    
-    
     /**
      * @return the z
      */

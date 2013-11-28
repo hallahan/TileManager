@@ -1,4 +1,4 @@
-package edu.oregonstate.carto.maptiles;
+package edu.oregonstate.carto.tilemanager;
 
 import edu.oregonstate.carto.tilemanager.HTTPTileSet;
 import edu.oregonstate.carto.tilemanager.ImageTile;

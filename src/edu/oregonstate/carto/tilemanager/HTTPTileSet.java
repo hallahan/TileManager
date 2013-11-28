@@ -82,22 +82,5 @@ public class HTTPTileSet extends TileSet {
     private void setHttpFormatString(String httpFormatString) {
         this.httpFormatString = httpFormatString;
     }
-    /**
-     * This method should only be called by Tile objects. It fetches the tile
-     * data via the corresponding protocol (HTTP or file).
-     *
-     * @param tile
-     * @return BufferedImage or Grid (depending on the type of tile)
-     */
-//    NH Maybe the data should be fetched by the tile, because
-//    the tile may be an image or grid, and those are handled differently
-//    @Override
-//    TileData fetch(Tile tile) {
-//        try {
-//            URL url = urlForTile(tile);
-//            return ImageIO.read(url);
-//        } catch (MalformedURLException ex) {
-//            Logger.getLogger(HTTPTileSet.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
+
 }

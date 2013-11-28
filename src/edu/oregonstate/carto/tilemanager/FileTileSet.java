@@ -13,6 +13,12 @@ import java.net.URL;
  */
 public class FileTileSet extends TileSet {
 
+    private final String rootDirectory;
+    
+    public FileTileSet(String rootDirectory) {
+        this.rootDirectory = rootDirectory;
+    }
+    
     @Override
     public URL urlForTile(Tile tile) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

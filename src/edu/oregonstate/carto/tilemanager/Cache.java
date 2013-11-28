@@ -1,6 +1,10 @@
 package edu.oregonstate.carto.tilemanager;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -15,7 +19,9 @@ public class Cache {
      */
     private static Cache singleton = null;
     
-    private ConcurrentHashMap<Long, Tile> map = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, Tile> map = new ConcurrentHashMap<>();
+    
+    private Cache() {}
     
     /**
      * Call this method to get the cache, not the constructor. We only want a
@@ -23,76 +29,36 @@ public class Cache {
      * 
      * @return the singleton instance
      */
-    public static Cache singleton() {
+    public static Cache getInstance() {
         if (singleton == null) singleton = new Cache();
         return singleton;
     }
     
-    public void put(Tile tile) {
-        Long key = getKey(tile.getZ(), tile.getX(), tile.getY());
-        map.put(key, tile);
+    public void put(URL url, Tile tile) {
+        String urlStr = url.toString();
+        map.put(urlStr, tile);
     }
     
     /**
      * Returns a tile if it is in the cache,
      * returns null otherwise.
      * 
-     * @param tileKey
+     * @param url (the key)
      * @return a tile or null
      */
-    public Tile get(Long tileKey) {
-        return map.get(tileKey);
+    public Tile get(URL url) {
+        Tile tile = map.get(url.toString());
+        return tile;
     }
     
-    public Tile get(int z, int x, int y) {
-        Long key = getKey(z, x, y);
-        return map.get(key);
+    public Tile get(String urlStr) {
+        URL url = null;
+        try {
+            url = new URL(urlStr);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(Cache.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return get(url);
     }
     
-    
-    /**
-     * When referencing a tile from a Cache, the tile must be content
-     * addressable based on the z, x, y coordinates. This is achieved by
-     * packing these values into a Long. This method is guaranteed
-     * to return a unique value for all z, x, y values within the following
-     * range:
-     * 
-     *      z: 1 - 127         (1 byte or 8 bits) Zoom is at least 1.
-     *      x: 0 - 134217727   (7 nibbles or 28 bits)
-     *      Y: 0 - 134217727   (7 nibbles or 28 bits)
-     * 
-     * All of this results in 64 bits, the size of a long integer.
-     * 
-     * @return hash key as a packed long integer
-     */
-    public Long getKey(int z, int x, int y) {
-        long zL = (long) z;
-        long xL = (long) x;
-        long yL = (long) y;
-        
-        Long key = new Long( yL | (xL << 28) | (zL << 56) );
-        
-        return key;
-    }
-    
-    
-    
-    
-    /**
-     * This extracts the z, x, y values from a hash key. 
-     * This is a long integer that has the z, x, y values bit
-     * packed into it.
-     * 
-     * @param hashKey
-     * @return [z, x, y] array
-     */
-    public static int[] getZXYFromKey(Long key) {
-        long k = key.longValue();
-        int z = (int) ((k >> 56) & 0xFFFFFFF); // 7 Fs means we have 7 nibbles
-        int x = (int) ((k >> 28) & 0xFFFFFFF);
-        int y = (int) (k & 0xFFFFFFF);
-        
-        int[] zxy = {z, x, y};
-        return zxy;
-    }
 }
