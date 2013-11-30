@@ -7,6 +7,16 @@ package edu.oregonstate.carto.tilemanager;
 public class GoogleTileSchema extends TileSchema {
     
     @Override
+    public TileCoord getTileForLatLngZoom(double lat, double lng, int zoom) {
+        TileCoord tmsCoord = super.getTileForLatLngZoom(lat, lng, zoom);
+        
+        // python reference code has automatic casting, so it looks kind of messy in java
+        int y = (int) ( (Math.pow(2, zoom) - 1) - (double)tmsCoord.Y );
+        
+        return new TileCoord(tmsCoord.Z, tmsCoord.X, y);
+    }
+    
+    @Override
     public TileCoord getTopLeftTile(Tile tile) {
         int x = tile.getX() - 1;
         int y = tile.getY() - 1;
