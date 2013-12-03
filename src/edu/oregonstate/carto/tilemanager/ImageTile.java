@@ -24,6 +24,10 @@ public class ImageTile extends Tile {
     public ImageTile(TileSet tileSet, int z, int x, int y) {
         super(tileSet, z,x,y);
     }
+    
+    public ImageTile(TileSet tileSet, TileCoord coord) {
+        super(tileSet, coord);
+    }
 
     @Override
     public BufferedImage fetch() {

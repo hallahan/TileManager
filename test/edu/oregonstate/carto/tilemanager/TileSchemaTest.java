@@ -89,4 +89,32 @@ public class TileSchemaTest {
             return null;
         }
     }
+
+    /**
+     * Test of getTilesForBBoxZoomRange method, of class TileSchema.
+     */
+    @Test
+    public void testGetTilesForBBoxZoomRange() {
+        System.out.println("getTilesForBBoxZoomRange");
+        
+//        -120.952351,45.076126,-120.884865,45.098067
+        double minLat = 45.076126;
+        double minLng = -120.952351;
+        double maxLat = 45.098067;
+        double maxLng = -120.884865;
+        int minZoom = 9;
+        int maxZoom = 13;
+        
+        TileSchema instance = new GoogleTileSchema();
+        
+        TileCoord[] result = instance.getTilesForBBoxZoomRange(minLat, minLng, maxLat, maxLng, minZoom, maxZoom);
+
+        assertEquals(result.length, 22);
+        assertEquals(result[4].Z, 10);
+        assertEquals(result[21].Z, 13);
+        assertEquals(result[15].Z, 12);
+        assertEquals(result[15].X, 672);
+        assertEquals(result[15].Y, 1471);
+    }
+
 }

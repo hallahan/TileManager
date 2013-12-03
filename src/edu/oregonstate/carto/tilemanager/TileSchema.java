@@ -45,43 +45,104 @@ public abstract class TileSchema {
     }
 
     public TileCoord[] getTilesForBBoxZoom(double minLat, double minLng,
-            double maxLat, double maxLng, int zoom) {
-        
+            double maxLat, double maxLng, int zoom) throws IllegalArgumentException {
+
+        if (minLat > maxLat) {
+            throw new IllegalArgumentException("minLat cannot be greater than maxLat");
+        }
+        if (minLng > maxLng) {
+            throw new IllegalArgumentException("minLng cannot be greater than maxLng");
+        }
+
         TileCoord minCoord = getTileForLatLngZoom(minLat, minLng, zoom);
         TileCoord maxCoord = getTileForLatLngZoom(maxLat, maxLng, zoom);
-        
+
         int minX = minCoord.X;
         int minY = minCoord.Y;
         int maxX = maxCoord.X;
         int maxY = maxCoord.Y;
-        
+
         int difX = maxX - minX;
         int difY = maxY - minY;
-        
+
         TileCoord[] tileCoords = new TileCoord[(difX + 1) * (Math.abs(difY) + 1)];
-        
+
         // TMSTileSchema
         if (difY >= 0) {
-           
+
             int i = 0;
-            for(int xIdx=0; xIdx <= difX; ++xIdx) {
-                for (int yIdx=0; yIdx <= difY; ++yIdx) {
-                    tileCoords[i++] = new TileCoord(zoom, minX+xIdx, minY+yIdx);
+            for (int xIdx = 0; xIdx <= difX; ++xIdx) {
+                for (int yIdx = 0; yIdx <= difY; ++yIdx) {
+                    tileCoords[i++] = new TileCoord(zoom, minX + xIdx, minY + yIdx);
                 }
             }
-        
-        // GoogleTileSchema
+
+            // GoogleTileSchema
         } else {
-            
+
             int i = 0;
-            for(int xIdx=0; xIdx <= difX; ++xIdx) {
-                for (int yIdx=0; yIdx >= difY; --yIdx) {
-                    tileCoords[i++] = new TileCoord(zoom, minX+xIdx, minY+yIdx);
+            for (int xIdx = 0; xIdx <= difX; ++xIdx) {
+                for (int yIdx = 0; yIdx >= difY; --yIdx) {
+                    tileCoords[i++] = new TileCoord(zoom, minX + xIdx, minY + yIdx);
                 }
             }
-        
+
         }
-        
+
+        return tileCoords;
+    }
+
+    private int numTilesForBBoxZoom(double minLat, double minLng,
+            double maxLat, double maxLng, int zoom) {
+
+        TileCoord minCoord = getTileForLatLngZoom(minLat, minLng, zoom);
+        TileCoord maxCoord = getTileForLatLngZoom(maxLat, maxLng, zoom);
+
+        int minX = minCoord.X;
+        int minY = minCoord.Y;
+        int maxX = maxCoord.X;
+        int maxY = maxCoord.Y;
+
+        int difX = maxX - minX;
+        int difY = maxY - minY;
+
+        return (difX + 1) * (Math.abs(difY) + 1);
+    }
+
+    /**
+     * This gives us a possibly enormous array of all of the tiles we need for a
+     * given bbox and zoom range. The returned array is flat, for your convenience!
+     *
+     * @param minLat of bbox
+     * @param minLng of bbox
+     * @param maxLat of bbox
+     * @param maxLng of bbox
+     * @param minZoom of zoom range
+     * @param maxZoom of zoom range
+     * @return an array of tile coordinates
+     * @throws IllegalArgumentException
+     */
+    public TileCoord[] getTilesForBBoxZoomRange(double minLat, double minLng,
+            double maxLat, double maxLng, int minZoom, int maxZoom) throws IllegalArgumentException {
+
+        if (maxZoom < minZoom) {
+            throw new IllegalArgumentException("maxZoom must be larger or the same as minZoom!");
+        }
+
+        int numTiles = 0;
+        for (int z = minZoom; z <= maxZoom; ++z) {
+            numTiles += numTilesForBBoxZoom(minLat, minLng, maxLat, maxLng, z);
+        }
+
+        TileCoord[] tileCoords = new TileCoord[numTiles];
+        int i=0;
+        for (int z = minZoom; z <= maxZoom; ++z) {
+            TileCoord[] tilesForZoom = getTilesForBBoxZoom(minLat, minLng, maxLat, maxLng, z);
+            for (TileCoord coord : tilesForZoom) {
+                tileCoords[i++] = coord;
+            }
+        }
+
         return tileCoords;
     }
 

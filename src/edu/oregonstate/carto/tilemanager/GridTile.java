@@ -24,6 +24,9 @@ public class GridTile extends Tile {
         super(tileSet, z, x, y);
     }
 
+    public GridTile(TileSet tileSet, TileCoord coord) {
+        super(tileSet, coord);
+    }
     
     @Override
     public Grid fetch() {

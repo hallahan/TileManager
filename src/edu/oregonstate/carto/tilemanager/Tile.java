@@ -29,6 +29,10 @@ public abstract class Tile<TileData> {
         this.x = x;
         this.y = y;
     }
+    
+    public Tile(TileSet tileSet, TileCoord coord) {
+        this(tileSet, coord.Z, coord.X, coord.Y);
+    }
 
     /**
      * Fetches the tile's data from memory, http, or file.
