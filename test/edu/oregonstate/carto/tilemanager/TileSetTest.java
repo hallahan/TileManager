@@ -85,8 +85,37 @@ public class TileSetTest {
     /**
      * Test of getTiles method, of class TileSet.
      */
+//    @Test
+//    public void testGetTilesChicago() {
+//        System.out.println("===getTiles===");
+//        double minLat = 41.886866;
+//        double minLng = -87.68336;
+//        double maxLat = 41.941194;
+//        double maxLng = -87.610362;
+//        int minZoom = 13;
+//        int maxZoom = 15;
+//
+//        Tile[] result = set.getTiles(minLat, minLng, maxLat, maxLng, minZoom, maxZoom);
+//        for (Tile t : result) {
+//            BufferedImage img = (BufferedImage) t.fetch();
+//            int z = t.getZ();
+//            int x = t.getX();
+//            int y = t.getY();
+//            File f = new File("test/output/testGetTilesChicago-" + z + "-" + x + 
+//                    "-" + y + ".png");
+//            
+//            try {
+//                ImageIO.write(img, "png", f);
+//                System.out.println("test/output/testGetTilesChicago-" + z + "-" + x + 
+//                    "-" + y + ".png");
+//            } catch (IOException ex) {
+//                Logger.getLogger(TileSetTest.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
+//    }
+    
     @Test
-    public void testGetTilesChicago() {
+    public void testGetMegaTilesChicago() {
         System.out.println("===getTiles===");
         double minLat = 41.886866;
         double minLng = -87.68336;
@@ -97,16 +126,17 @@ public class TileSetTest {
 
         Tile[] result = set.getTiles(minLat, minLng, maxLat, maxLng, minZoom, maxZoom);
         for (Tile t : result) {
-            BufferedImage img = (BufferedImage) t.fetch();
+            ImageTile imgTile = (ImageTile) t;
+            BufferedImage img = (BufferedImage)t.createMegaTile();
             int z = t.getZ();
             int x = t.getX();
             int y = t.getY();
-            File f = new File("test/output/testGetTilesChicago-" + z + "-" + x + 
+            File f = new File("test/output/testGetMegaTilesChicago-" + z + "-" + x + 
                     "-" + y + ".png");
             
             try {
                 ImageIO.write(img, "png", f);
-                System.out.println("test/output/testGetTilesChicago-" + z + "-" + x + 
+                System.out.println("test/output/testGetMegaTilesChicago-" + z + "-" + x + 
                     "-" + y + ".png");
             } catch (IOException ex) {
                 Logger.getLogger(TileSetTest.class.getName()).log(Level.SEVERE, null, ex);

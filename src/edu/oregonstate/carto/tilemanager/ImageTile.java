@@ -33,7 +33,6 @@ public class ImageTile extends Tile {
     public BufferedImage fetch() {
         if (img == null) {
             URL url = tileSet.urlForTile(this);
-            // FIXME TODO resolve this exception properly
             try {
                 img = ImageIO.read(url);
             } catch (IOException ex) {
@@ -83,7 +82,7 @@ public class ImageTile extends Tile {
         BufferedImage bottomTile = (BufferedImage) getBottomTile().fetch();
         g2d.drawImage(bottomTile, tileSize, tileSize * 2, null);
         
-        BufferedImage bottomRightTile = (BufferedImage) getBottomTile().fetch();
+        BufferedImage bottomRightTile = (BufferedImage) getBottomRightTile().fetch();
         g2d.drawImage(bottomRightTile, tileSize * 2, tileSize * 2, null);
         
         return megaTile;
