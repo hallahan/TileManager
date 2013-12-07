@@ -1,5 +1,7 @@
 package edu.oregonstate.carto.tilemanager;
 
+import java.io.IOException;
+
 /**
  *
  * @author Nicholas Hallahan nick@theoutpost.io
@@ -40,13 +42,13 @@ public abstract class Tile<TileData> {
      * If the tile is a grid, Grid is returned;
      * @return BufferedImage or Grid
      */
-    public abstract TileData fetch();
+    public abstract TileData fetch() throws IOException;
     
     /**
      * 
      * @return a BufferedImage or Grid that is 3x3 tiles
      */
-    public abstract TileData createMegaTile();
+    public abstract TileData createMegaTile() throws IOException;
     
     public Tile getTopLeftTile() {
         return tileSet.getTopLeftTile(this);

@@ -14,12 +14,11 @@ import java.util.logging.Logger;
 public class GridTile extends Tile {
 
     /**
-     * This is the DEM grid data of this tile. This in-memory
-     * field is populated by fetch.
+     * This is the DEM grid data of this tile. This in-memory field is populated
+     * by fetch.
      */
     private Grid grid;
-    
-    
+
     public GridTile(TileSet tileSet, int z, int x, int y) {
         super(tileSet, z, x, y);
     }
@@ -27,20 +26,13 @@ public class GridTile extends Tile {
     public GridTile(TileSet tileSet, TileCoord coord) {
         super(tileSet, coord);
     }
-    
+
     @Override
-    public Grid fetch() {
+    public Grid fetch() throws IOException {
         if (grid == null) {
             URL url = tileSet.urlForTile(this);
-            
-            // It makes sense to return null if we cant get our intended data.
-            // This should be a common occurrance if the origin does not have
-            // tiles for a specific area.
-            try {
-                grid = BinaryGridReader.read(url);
-            } catch (IOException ex) {
-                Logger.getLogger(ImageTile.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            grid = BinaryGridReader.read(url);
+
         }
         return grid;
     }
