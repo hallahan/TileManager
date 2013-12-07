@@ -37,7 +37,7 @@ public class ImageTile extends Tile {
             try {
                 img = ImageIO.read(url);
             } catch (IOException ex) {
-                Logger.getLogger(ImageTile.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Could not fetch tile from " + url.toString());
             }
         }
         return img;

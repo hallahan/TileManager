@@ -167,7 +167,7 @@ public abstract class TileSet {
         return t;
     }
     
-    public Tile[] getTiles(int minLat, int minLng, int maxLat, int maxLng, int minZoom, int maxZoom) {
+    public Tile[] getTiles(double minLat, double minLng, double maxLat, double maxLng, int minZoom, int maxZoom) {
         TileCoord[] tileCoords = schema.getTileCoordsForBBoxZoomRange(minLat, minLng, maxLat, maxLng, minZoom, maxZoom);
         Tile[] tiles = new Tile[tileCoords.length];
         for (int i = 0; i < tiles.length; ++i) {
