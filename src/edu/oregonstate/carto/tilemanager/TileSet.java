@@ -150,6 +150,23 @@ public abstract class TileSet {
         return t;
     }
     
+    /**
+     * Gets the tile with the corresponding coordinates from the cache. If not,
+     * a new tile is created.
+     *
+     * @param coord
+     * @return the tile we are looking for
+     */
+    public Tile getTile(int z, int x, int y) {
+        URL url = urlForZXY(z, x, y);
+        Tile t = cache.get(url);
+        if (t == null) {
+            t = createTile(z, x, y);
+            cache.put(url, t);
+        }
+        return t;
+    }
+    
     public Tile[] getTiles(int minLat, int minLng, int maxLat, int maxLng, int minZoom, int maxZoom) {
         TileCoord[] tileCoords = schema.getTileCoordsForBBoxZoomRange(minLat, minLng, maxLat, maxLng, minZoom, maxZoom);
         Tile[] tiles = new Tile[tileCoords.length];
