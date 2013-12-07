@@ -37,8 +37,8 @@ public class TMSTileSchemaTest {
     }
 
     @Test
-    public void testGetTileForLatLngZoom() {
-        System.out.println("getTileForLatLngZoom");
+    public void testGetTileCoordsForLatLngZoom() {
+        System.out.println("getTileCoordsForLatLngZoom");
         double lat = 56.053635;
         double lng = -112.167868;
         int zoom = 9;
@@ -48,7 +48,7 @@ public class TMSTileSchemaTest {
         int expX = 96;
         int expY = 352;
         
-        TileCoord result = instance.getTileForLatLngZoom(lat, lng, zoom);
+        TileCoord result = instance.getTileCoordsForLatLngZoom(lat, lng, zoom);
         
         assertEquals(expZ, result.Z);
         assertEquals(expX, result.X);
@@ -57,8 +57,8 @@ public class TMSTileSchemaTest {
     }
         
     @Test
-    public void testGetTilesForBBoxZoom() {
-        System.out.println("getTilesForBBoxZoom");
+    public void testGetTileCoordsForBBoxZoom() {
+        System.out.println("getTileCoordsForBBoxZoom");
         
 //        -120.952351,45.076126,-120.884865,45.098067
         double minLat = 45.076126;
@@ -69,7 +69,7 @@ public class TMSTileSchemaTest {
         
         TileSchema tmsSchema = new TMSTileSchema();
         
-        TileCoord[] tmsTiles = tmsSchema.getTilesForBBoxZoom(minLat, minLng, maxLat, maxLng, zoom);
+        TileCoord[] tmsTiles = tmsSchema.getTileCoordsForBBoxZoom(minLat, minLng, maxLat, maxLng, zoom);
         
         assertEquals(tmsTiles.length, 6);
         

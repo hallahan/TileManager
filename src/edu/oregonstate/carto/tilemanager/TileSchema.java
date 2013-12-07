@@ -23,7 +23,7 @@ public abstract class TileSchema {
      * @param zoom
      * @return
      */
-    public TileCoord getTileForLatLngZoom(double lat, double lng, int zoom) {
+    public TileCoord getTileCoordsForLatLngZoom(double lat, double lng, int zoom) {
         // convert lat lng to meters
         double xMeters = lng * ORIGIN_SHIFT / 180.0;
         double yMeters = Math.log(Math.tan((90 + lat) * Math.PI / 360.0))
@@ -44,7 +44,7 @@ public abstract class TileSchema {
         return new TileCoord(zoom, xTile, yTile);
     }
 
-    public TileCoord[] getTilesForBBoxZoom(double minLat, double minLng,
+    public TileCoord[] getTileCoordsForBBoxZoom(double minLat, double minLng,
             double maxLat, double maxLng, int zoom) throws IllegalArgumentException {
 
         if (minLat > maxLat) {
@@ -54,8 +54,8 @@ public abstract class TileSchema {
             throw new IllegalArgumentException("minLng cannot be greater than maxLng");
         }
 
-        TileCoord minCoord = getTileForLatLngZoom(minLat, minLng, zoom);
-        TileCoord maxCoord = getTileForLatLngZoom(maxLat, maxLng, zoom);
+        TileCoord minCoord = getTileCoordsForLatLngZoom(minLat, minLng, zoom);
+        TileCoord maxCoord = getTileCoordsForLatLngZoom(maxLat, maxLng, zoom);
 
         int minX = minCoord.X;
         int minY = minCoord.Y;
@@ -92,11 +92,11 @@ public abstract class TileSchema {
         return tileCoords;
     }
 
-    private int numTilesForBBoxZoom(double minLat, double minLng,
+    private int numTileCoordsForBBoxZoom(double minLat, double minLng,
             double maxLat, double maxLng, int zoom) {
 
-        TileCoord minCoord = getTileForLatLngZoom(minLat, minLng, zoom);
-        TileCoord maxCoord = getTileForLatLngZoom(maxLat, maxLng, zoom);
+        TileCoord minCoord = getTileCoordsForLatLngZoom(minLat, minLng, zoom);
+        TileCoord maxCoord = getTileCoordsForLatLngZoom(maxLat, maxLng, zoom);
 
         int minX = minCoord.X;
         int minY = minCoord.Y;
@@ -122,7 +122,7 @@ public abstract class TileSchema {
      * @return an array of tile coordinates
      * @throws IllegalArgumentException
      */
-    public TileCoord[] getTilesForBBoxZoomRange(double minLat, double minLng,
+    public TileCoord[] getTileCoordsForBBoxZoomRange(double minLat, double minLng,
             double maxLat, double maxLng, int minZoom, int maxZoom) throws IllegalArgumentException {
 
         if (maxZoom < minZoom) {
@@ -131,13 +131,13 @@ public abstract class TileSchema {
 
         int numTiles = 0;
         for (int z = minZoom; z <= maxZoom; ++z) {
-            numTiles += numTilesForBBoxZoom(minLat, minLng, maxLat, maxLng, z);
+            numTiles += numTileCoordsForBBoxZoom(minLat, minLng, maxLat, maxLng, z);
         }
 
         TileCoord[] tileCoords = new TileCoord[numTiles];
         int i=0;
         for (int z = minZoom; z <= maxZoom; ++z) {
-            TileCoord[] tilesForZoom = getTilesForBBoxZoom(minLat, minLng, maxLat, maxLng, z);
+            TileCoord[] tilesForZoom = getTileCoordsForBBoxZoom(minLat, minLng, maxLat, maxLng, z);
             for (TileCoord coord : tilesForZoom) {
                 tileCoords[i++] = coord;
             }

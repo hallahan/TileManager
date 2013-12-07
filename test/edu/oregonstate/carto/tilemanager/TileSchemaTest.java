@@ -36,7 +36,7 @@ public class TileSchemaTest {
      * Test of getTileForLatLngZoom method, of class TileSchema.
      */
     @Test
-    public void testGetTileForLatLngZoom() {
+    public void testGetTileCoordForLatLngZoom() {
         System.out.println("getTileForLatLngZoom");
         double lat = 56.053635;
         double lng = -112.167868;
@@ -47,7 +47,7 @@ public class TileSchemaTest {
         int expX = 96;
         int expY = 352;
         
-        TileCoord result = instance.getTileForLatLngZoom(lat, lng, zoom);
+        TileCoord result = instance.getTileCoordsForLatLngZoom(lat, lng, zoom);
         
         assertEquals(expZ, result.Z);
         assertEquals(expX, result.X);
@@ -91,10 +91,10 @@ public class TileSchemaTest {
     }
 
     /**
-     * Test of getTilesForBBoxZoomRange method, of class TileSchema.
+     * Test of getTileCoordsForBBoxZoomRange method, of class TileSchema.
      */
     @Test
-    public void testGetTilesForBBoxZoomRange() {
+    public void testGetTileCoordsForBBoxZoomRange() {
         System.out.println("getTilesForBBoxZoomRange");
         
 //        -120.952351,45.076126,-120.884865,45.098067
@@ -107,7 +107,7 @@ public class TileSchemaTest {
         
         TileSchema instance = new GoogleTileSchema();
         
-        TileCoord[] result = instance.getTilesForBBoxZoomRange(minLat, minLng, maxLat, maxLng, minZoom, maxZoom);
+        TileCoord[] result = instance.getTileCoordsForBBoxZoomRange(minLat, minLng, maxLat, maxLng, minZoom, maxZoom);
 
         assertEquals(result.length, 22);
         assertEquals(result[4].Z, 10);
