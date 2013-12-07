@@ -32,14 +32,15 @@ public class GridTile extends Tile {
     public Grid fetch() {
         if (grid == null) {
             URL url = tileSet.urlForTile(this);
-            // FIXME TODO resolve this exception properly
-            // FIXME TODO We must modify BinaryGridReader so that it reads from
-            // a URL rather than a file path.
-//            try {
-//                grid = BinaryGridReader.read(url);
-//            } catch (IOException ex) {
-//                Logger.getLogger(ImageTile.class.getName()).log(Level.SEVERE, null, ex);
-//            }
+            
+            // It makes sense to return null if we cant get our intended data.
+            // This should be a common occurrance if the origin does not have
+            // tiles for a specific area.
+            try {
+                grid = BinaryGridReader.read(url);
+            } catch (IOException ex) {
+                Logger.getLogger(ImageTile.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         return grid;
     }

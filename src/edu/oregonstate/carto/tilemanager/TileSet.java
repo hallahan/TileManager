@@ -19,12 +19,12 @@ public abstract class TileSet {
      * The constructor sets the type of tiles we will have in the set. This
      * helps us decide what type of tile to construct.
      */
-    private final TileType tileType;
+    private final TileType type;
     /**
      * The constructor also sets the schema. once this is set, the TileSchema
      * methods will compute the correct tile relative to a given input tile.
      */
-    private TileSchema tileSchema;
+    private TileSchema schema;
     /**
      * The cache is a content addressable object that will return a given tile
      * if it already has been created.
@@ -37,8 +37,8 @@ public abstract class TileSet {
      * an image by default.
      */
     public TileSet() {
-        tileSchema = new GoogleTileSchema();
-        tileType = TileType.IMAGE;
+        schema = new GoogleTileSchema();
+        type = TileType.IMAGE;
     }
 
     /**
@@ -52,8 +52,8 @@ public abstract class TileSet {
      * @param schema
      */
     public TileSet(TileSchema schema) {
-        tileSchema = schema;
-        tileType = TileType.IMAGE;
+        this.schema = schema;
+        type = TileType.IMAGE;
     }
 
     /**
@@ -63,8 +63,8 @@ public abstract class TileSet {
      * @param type
      */
     public TileSet(TileType type) {
-        tileSchema = new GoogleTileSchema();
-        tileType = type;
+        schema = new GoogleTileSchema();
+        this.type = type;
     }
 
     /**
@@ -74,8 +74,8 @@ public abstract class TileSet {
      * @param type
      */
     public TileSet(TileSchema schema, TileType type) {
-        tileSchema = schema;
-        tileType = type;
+        this.schema = schema;
+        this.type = type;
     }
 
     /**
@@ -111,7 +111,7 @@ public abstract class TileSet {
     public abstract URL urlForZXY(int z, int x, int y);
 
     public TileSchema getTileSchema() {
-        return tileSchema;
+        return schema;
     }
 
     /**
@@ -123,7 +123,7 @@ public abstract class TileSet {
      * @return the new tile
      */
     private Tile createTile(int z, int x, int y) {
-        if (tileType == TileType.GRID) {
+        if (type == TileType.GRID) {
             return new GridTile(this, z, x, y);
         }
         return new ImageTile(this, z, x, y);
@@ -140,7 +140,7 @@ public abstract class TileSet {
      * @param coord
      * @return the tile we are looking for
      */
-    public Tile retrieveTile(TileCoord coord) {
+    public Tile getTile(TileCoord coord) {
         URL url = urlForTileCoord(coord);
         Tile t = cache.get(url);
         if (t == null) {
@@ -150,45 +150,54 @@ public abstract class TileSet {
         return t;
     }
     
-    
+    public Tile[] getTiles(int minLat, int minLng, int maxLat, int maxLng, int minZoom, int maxZoom) {
+        TileCoord[] tileCoords = schema.getTileCoordsForBBoxZoomRange(minLat, minLng, maxLat, maxLng, minZoom, maxZoom);
+        Tile[] tiles = new Tile[tileCoords.length];
+        for (int i = 0; i < tiles.length; ++i) {
+            TileCoord coord = tileCoords[i];
+            Tile t = getTile(coord);
+            tiles[i] = t;
+        }
+        return tiles;
+    }
 
     public Tile getTopLeftTile(Tile tile) {
-        TileCoord coord = tileSchema.getTopLeftTile(tile);
-        return retrieveTile(coord);
+        TileCoord coord = schema.getTopLeftTile(tile);
+        return getTile(coord);
     }
 
     public Tile getTopTile(Tile tile) {
-        TileCoord coord = tileSchema.getTopTile(tile);
-        return retrieveTile(coord);
+        TileCoord coord = schema.getTopTile(tile);
+        return getTile(coord);
     }
 
     public Tile getTopRightTile(Tile tile) {
-        TileCoord coord = tileSchema.getTopRightTile(tile);
-        return retrieveTile(coord);
+        TileCoord coord = schema.getTopRightTile(tile);
+        return getTile(coord);
     }
 
     public Tile getLeftTile(Tile tile) {
-        TileCoord coord = tileSchema.getLeftTile(tile);
-        return retrieveTile(coord);
+        TileCoord coord = schema.getLeftTile(tile);
+        return getTile(coord);
     }
 
     public Tile getRightTile(Tile tile) {
-        TileCoord coord = tileSchema.getRightTile(tile);
-        return retrieveTile(coord);
+        TileCoord coord = schema.getRightTile(tile);
+        return getTile(coord);
     }
 
     public Tile getBottomLeftTile(Tile tile) {
-        TileCoord coord = tileSchema.getBottomLeftTile(tile);
-        return retrieveTile(coord);
+        TileCoord coord = schema.getBottomLeftTile(tile);
+        return getTile(coord);
     }
 
     public Tile getBottomTile(Tile tile) {
-        TileCoord coord = tileSchema.getBottomTile(tile);
-        return retrieveTile(coord);
+        TileCoord coord = schema.getBottomTile(tile);
+        return getTile(coord);
     }
 
     public Tile getBottomRightTile(Tile tile) {
-        TileCoord coord = tileSchema.getBottomRightTile(tile);
-        return retrieveTile(coord);
+        TileCoord coord = schema.getBottomRightTile(tile);
+        return getTile(coord);
     }
 }
