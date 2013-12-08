@@ -30,7 +30,7 @@ public class ImageTile extends Tile {
     }
 
     @Override
-    public BufferedImage fetch() throws IOException {
+    public synchronized BufferedImage fetch() throws IOException {
         if (img == null) {
             URL url = tileSet.urlForTile(this);
             img = ImageIO.read(url);

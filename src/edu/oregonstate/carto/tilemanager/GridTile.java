@@ -28,7 +28,7 @@ public class GridTile extends Tile {
     }
 
     @Override
-    public Grid fetch() throws IOException {
+    public synchronized Grid fetch() throws IOException {
         if (grid == null) {
             URL url = tileSet.urlForTile(this);
             grid = BinaryGridReader.read(url);
