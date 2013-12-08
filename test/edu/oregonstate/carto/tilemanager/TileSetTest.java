@@ -9,6 +9,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -220,6 +223,71 @@ public class TileSetTest {
         }
     }
     
+    public class ReadWriteChicagoTiles implements Runnable {
+        private Tile[] tiles;
+        private int idx, endIdx;
+        
+        public ReadWriteChicagoTiles(Tile[] tiles, int startIdx, int endIdx) {
+            this.tiles = tiles;
+            this.idx = startIdx;
+            this.endIdx = endIdx;
+        }
+        
+        @Override
+        public void run() {
+            while (idx <= endIdx) {
+                Tile t = tiles[idx];
+                int z = t.getZ();
+                int x = t.getX();
+                int y = t.getY();
+               
+                try {
+                    BufferedImage img = (BufferedImage) t.fetch();
+                    File f = new File("test/output/testGetTilesChicagoThread-" + z + "-" + x + 
+                            "-" + y + ".png");
+                    ImageIO.write(img, "png", f);
+                    System.out.println("test/output/testGetTilesChicagoThread-" + z + "-" + x + 
+                            "-" + y + ".png");
+                } catch (IOException ex) {
+                    System.out.println("Could not write test/output/testGetTilesChicagoThread-" 
+                            + z + "-" + x + "-" + y + ".png");
+                }
+                ++idx;
+            }
+        }
+    }
+    
+    @Test
+    public void testGetTilesChicagoThread() {
+        final int NUM_THREADS = 4;
+        
+        System.out.println("===testGetTilesChicagoThread===");
+        double minLat = 41.886866;
+        double minLng = -87.68336;
+        double maxLat = 41.941194;
+        double maxLng = -87.610362;
+        int minZoom = 13;
+        int maxZoom = 15;
+
+        Tile[] result = set.getTiles(minLat, minLng, maxLat, maxLng, minZoom, maxZoom);
+        int len = result.length;
+        int partitionSize = len / NUM_THREADS;
+        ExecutorService pool = Executors.newFixedThreadPool(NUM_THREADS);
+        Runnable worker;
+        
+        int i = 0;
+        for(; i < NUM_THREADS-1; ++i) {
+            worker = new ReadWriteChicagoTiles( result, partitionSize*i, partitionSize*(i+1)-1 );
+            pool.execute(worker);
+        }
+        worker = new ReadWriteChicagoTiles( result, partitionSize*i, len-1 ); // last one may be a bit longer in the array
+        pool.execute(worker);
+        
+        pool.shutdown();
+        while (!pool.isTerminated()) {}
+        System.out.println("Finished processing testGetTilesChicagoThread");
+    }
+    
     @Test
     public void testGetMegaTilesChicago() {
         System.out.println("===testGetMegaTilesChicago===");
@@ -255,6 +323,7 @@ public class TileSetTest {
             }
         }
     }
+    
     public class TileSetImpl extends TileSet {
 
         public URL urlForZXY(int z, int x, int y) {
