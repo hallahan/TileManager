@@ -140,14 +140,8 @@ public abstract class TileSet {
      * @param coord
      * @return the tile we are looking for
      */
-    public synchronized Tile getTile(TileCoord coord) {
-        URL url = urlForTileCoord(coord);
-        Tile t = cache.get(url);
-        if (t == null) {
-            t = createTile(coord);
-            cache.put(url, t);
-        }
-        return t;
+    public Tile getTile(TileCoord coord) {
+        return getTile(coord.Z, coord.X, coord.Y);
     }
     
     /**
