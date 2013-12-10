@@ -25,8 +25,10 @@ import javax.xml.bind.annotation.XmlElement;
  */
 public class Layer {
 
-    public static final int BLENDINGNORMAL = 0;
-    public static final int BLENDINGMULTIPLY = 1;
+    public enum BlendType {
+        NORMAL, MULTIPLY
+    }
+    
     @XmlElement(name = "visible")
     private boolean visible = true;
     @XmlElement(name = "layerName")
@@ -36,7 +38,7 @@ public class Layer {
     private String textureURL;
     private TileSet maskTileSet;
     @XmlElement(name = "blending")
-    private int blending = BLENDINGNORMAL;
+    private BlendType blending = BlendType.NORMAL;
     @XmlElement(name = "opacity")
     private float opacity = 1;
     @XmlElement(name = "curveURL")
@@ -271,17 +273,21 @@ public class Layer {
         this.maskTileSet = maskTileSet;
     }
 
+
     /**
-     * @return the blending
+     * 
+     * @return true if the blend type is normal
      */
     public boolean isBlendingNormal() {
-        return blending == BLENDINGNORMAL;
+        return blending == BlendType.NORMAL;
     }
 
     /**
-     * @param blending the blending to set
+     * Setting the blending type.
+     * 
+     * @param blending type
      */
-    public void setBlending(int blending) {
+    public void setBlending(BlendType blending) {
         this.blending = blending;
     }
 
