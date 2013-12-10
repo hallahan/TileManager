@@ -47,7 +47,7 @@ public class ImageTile extends Tile {
      */
     @Override
     public BufferedImage createMegaTile() throws IOException {
-        BufferedImage megaTile = new BufferedImage(tileSize * 3, tileSize * 3, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage megaTile = new BufferedImage(megaTileSize, megaTileSize, BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D g2d = megaTile.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -57,28 +57,28 @@ public class ImageTile extends Tile {
         g2d.drawImage(topLeftTile, 0, 0, null);
 
         BufferedImage topTile = (BufferedImage) getTopTile().fetch();
-        g2d.drawImage(topTile, tileSize, 0, null);
+        g2d.drawImage(topTile, TILE_SIZE, 0, null);
 
         BufferedImage topRightTile = (BufferedImage) getTopRightTile().fetch();
-        g2d.drawImage(topRightTile, tileSize * 2, 0, null);
+        g2d.drawImage(topRightTile, TILE_SIZE * 2, 0, null);
 
         BufferedImage leftTile = (BufferedImage) getLeftTile().fetch();
-        g2d.drawImage(leftTile, 0, tileSize, null);
+        g2d.drawImage(leftTile, 0, TILE_SIZE, null);
 
         // The tile in the center is this tile.
-        g2d.drawImage(fetch(), tileSize, tileSize, null);
+        g2d.drawImage(fetch(), TILE_SIZE, TILE_SIZE, null);
 
         BufferedImage rightTile = (BufferedImage) getRightTile().fetch();
-        g2d.drawImage(rightTile, tileSize * 2, tileSize, null);
+        g2d.drawImage(rightTile, TILE_SIZE * 2, TILE_SIZE, null);
 
         BufferedImage bottomLeftTile = (BufferedImage) getBottomLeftTile().fetch();
-        g2d.drawImage(bottomLeftTile, 0, tileSize * 2, null);
+        g2d.drawImage(bottomLeftTile, 0, TILE_SIZE * 2, null);
 
         BufferedImage bottomTile = (BufferedImage) getBottomTile().fetch();
-        g2d.drawImage(bottomTile, tileSize, tileSize * 2, null);
+        g2d.drawImage(bottomTile, TILE_SIZE, TILE_SIZE * 2, null);
 
         BufferedImage bottomRightTile = (BufferedImage) getBottomRightTile().fetch();
-        g2d.drawImage(bottomRightTile, tileSize * 2, tileSize * 2, null);
+        g2d.drawImage(bottomRightTile, TILE_SIZE * 2, TILE_SIZE * 2, null);
 
         return megaTile;
     }

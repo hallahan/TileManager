@@ -1,19 +1,25 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.oregonstate.carto.mapcomposer;
 
 import com.jhlabs.composite.MultiplyComposite;
 import com.jhlabs.image.BicubicScaleFilter;
+import com.jhlabs.image.BoxBlurFilter;
 import com.jhlabs.image.ImageUtils;
+import com.jhlabs.image.LightFilter;
+import com.jhlabs.image.ShadowFilter;
 import com.jhlabs.image.TileImageFilter;
+import edu.oregonstate.carto.mapcomposer.map.style.Emboss;
+import edu.oregonstate.carto.mapcomposer.map.style.Shadow;
+import edu.oregonstate.carto.mapcomposer.map.style.Tint;
+import edu.oregonstate.carto.mapcomposer.utils.TintFilter;
 import edu.oregonstate.carto.tilemanager.Tile;
 import edu.oregonstate.carto.tilemanager.TileSet;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorConvertOp;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -29,34 +35,45 @@ public class Layer {
         NORMAL, MULTIPLY
     }
     
+    private TileSet imageTileSet;
+    private TileSet maskTileSet;
+    
     @XmlElement(name = "visible")
     private boolean visible = true;
+    
     @XmlElement(name = "layerName")
     private String layerName;
-    private TileSet imageTileSet;
+    
     @XmlElement(name = "textureURL")
     private String textureURL;
-    private TileSet maskTileSet;
+    
     @XmlElement(name = "blending")
     private BlendType blending = BlendType.NORMAL;
+    
     @XmlElement(name = "opacity")
     private float opacity = 1;
+    
     @XmlElement(name = "curveURL")
     private String curveURL;
+    
 //    @XmlElement(name = "tint")
-//    private Tint tint = null;
+    private Tint tint = null;
+    
     @XmlElement(name = "textureScale")
     private float textureScale = 1f;
+    
     @XmlElement(name = "invertMask")
     private boolean invertMask = false;
+    
     @XmlElement(name = "maskBlur")
     private float maskBlur = 0;
-
-//    @XmlElement(name = "shadow")
-//    private Shadow shadow = null;
-//    @XmlElement(name = "emboss")
-//    private Emboss emboss = null;
     
+//    @XmlElement(name = "shadow")
+    private Shadow shadow = null;
+    
+//    @XmlElement(name = "emboss")
+    private Emboss emboss = null;
+
     public void renderToTile(Graphics2D g2d, int z, int x, int y) {
 
         if (isBlendingNormal()) {
@@ -120,87 +137,127 @@ public class Layer {
             //image = curve(image, this.curveURL);
         }
 
-        /*
-         // tinting
-         if (this.tint
-         != null) {
-         // use the pre-existing image for modulating brightness if the image
-         // exists (i.e. a texture image has been created or an image has
-         // been loaded).
-         if (isValidImage(textureImage) || isValidImage(imageTile)) {
-         TintFilter tintFilter = new TintFilter();
-         tintFilter.setTint(this.tint.getTintColor());
-         image = tintFilter.filter(image, null);
-         this.measureTime("Image tinted");
-         } else {
-         // no pre-existing image, create a solid color image
-         image = solidColorImage(w, h, this.tint.getTintColor());
-         this.measureTime("New solid color image");
-         }
-         }
-         // masking
-         BufferedImage maskImage = maskImageTile;
 
-         if (isValidImage(maskImage)) {
-         if (this.maskBlur > 0) {
+        // tinting
+        if (this.tint != null) {
+            // use the pre-existing image for modulating brightness if the image
+            // exists (i.e. a texture image has been created or an image has
+            // been loaded).
+            if (textureImage != null || image != null) {
+                TintFilter tintFilter = new TintFilter();
+                tintFilter.setTint(this.tint.getTintColor());
+                image = tintFilter.filter(image, null);
+            } else {
+                // no pre-existing image, create a solid color image
+                image = solidColorImage(Map.TILE_SIZE * 3, Map.TILE_SIZE * 3, this.tint.getTintColor());
+            }
+        }
 
-         BoxBlurFilter blurFilter = new BoxBlurFilter();
-         blurFilter.setHRadius(this.maskBlur);
-         blurFilter.setVRadius(this.maskBlur);
-         blurFilter.setPremultiplyAlpha(false);
-         blurFilter.setIterations(1);
+        // masking
+        BufferedImage maskImage = null;
+        if (maskTileSet != null) {
+            Tile tile = maskTileSet.getTile(z, x, y);
+            try {
+                maskImage = (BufferedImage) tile.createMegaTile();
+                // convert to ARGB. All following manipulations are optimized for 
+                // this modus.
+                maskImage = ImageUtils.convertImageToARGB(maskImage);
+            } catch (IOException exc) {
+                maskImage = null;
+            }
+        }
+        
+        if (maskImage != null) {
+            if (this.maskBlur > 0) {
+                BoxBlurFilter blurFilter = new BoxBlurFilter();
+                blurFilter.setHRadius(this.maskBlur);
+                blurFilter.setVRadius(this.maskBlur);
+                blurFilter.setPremultiplyAlpha(false);
+                blurFilter.setIterations(1);
+                maskImage = blurFilter.filter(maskImage, null);
+            }
 
-                
-         maskImage = blurFilter.filter(maskImage, null);
+            image = alphaChannelFromGrayImage(image, maskImage, this.invertMask);            
+        }
+        
+        // embossing
+        if (this.emboss != null) {
+            // this solution works fine, but is slow
+            LightFilter lightFilter = new LightFilter();
+            lightFilter.setBumpSource(LightFilter.BUMPS_FROM_IMAGE_ALPHA);
+            lightFilter.setBumpHeight(this.emboss.getEmbossHeight());
+            lightFilter.setBumpSoftness(this.emboss.getEmbossSoftness());
+            LightFilter.Light forestLight = (LightFilter.Light) (lightFilter.getLights().get(0));
+            forestLight.setAzimuth((float) Math.toRadians(this.emboss.getEmbossAzimuth() - 90));
+            forestLight.setElevation((float) Math.toRadians(this.emboss.getEmbossElevation()));
+            forestLight.setDistance(0);
+            forestLight.setIntensity(1f);
+            //lightFilter.getMaterial().highlight = 10f;
+            lightFilter.getMaterial().highlight = 10f;
+            image = lightFilter.filter(image, null);
+        }
 
-         }
-         image = alphaChannelFromGrayImage(image, maskImage, this.invertMask);
-         this.measureTime("Alpha channel applied");
-         }
-         // embossing
-         if (this.emboss
-         != null) {
-         // this solution works fine, but is slow
-         LightFilter lightFilter = new LightFilter();
-         lightFilter.setBumpSource(LightFilter.BUMPS_FROM_IMAGE_ALPHA);
-         lightFilter.setBumpHeight(this.emboss.getEmbossHeight());
-         lightFilter.setBumpSoftness(this.emboss.getEmbossSoftness());
-         LightFilter.Light forestLight = (LightFilter.Light) (lightFilter.getLights().get(0));
-         forestLight.setAzimuth((float) Math.toRadians(this.emboss.getEmbossAzimuth() - 90));
-         forestLight.setElevation((float) Math.toRadians(this.emboss.getEmbossElevation()));
-         forestLight.setDistance(0);
-         forestLight.setIntensity(1f);
-         //lightFilter.getMaterial().highlight = 10f;
-         lightFilter.getMaterial().highlight = 10f;
-         image = lightFilter.filter(image, null);
+        // drop shadow: draw it onto the destination image
+        if (this.shadow != null) {
+            BufferedImage shadowImage = ImageUtils.cloneImage(image);
+            //x negative : left  -  x positive : right
+            //y negative : down  -  y positive : up
+            //TODO : distinguish x and y offset OR use a mouving offset !!
+            ShadowFilter shadowFilter = new ShadowFilter(this.shadow.getShadowFuziness(), this.shadow.getShadowOffset(), -this.shadow.getShadowOffset(), 1f);
+            shadowFilter.setShadowColor(this.shadow.getShadowColor().getRGB());
+            shadowImage = shadowFilter.filter(shadowImage, null);
+            shadowImage = shadowImage.getSubimage(Map.TILE_SIZE, Map.TILE_SIZE, Map.TILE_SIZE, Map.TILE_SIZE);
+            g2d.drawImage(shadowImage, null, null);
 
-           
-         this.measureTime("Image embossed");
-         }
-         // drop shadow: draw it onto the destination image
-         if (this.shadow
-         != null) {
-         BufferedImage shadowImage = ImageUtils.cloneImage(image);
+        }
 
-         //x negative : left  -  x positive : right
-         //y negative : down  -  y positive : up
-         //TODO : distinguish x and y offset OR use a mouving offset !!
-         ShadowFilter shadowFilter = new ShadowFilter(this.shadow.getShadowFuziness(), this.shadow.getShadowOffset(), -this.shadow.getShadowOffset(), 1f);
-         shadowFilter.setShadowColor(this.shadow.getShadowColor().getRGB());
-         shadowImage = shadowFilter.filter(shadowImage, null);
-
-         if (imageCollection instanceof TiledImageCollection) {
-         g2d.drawImage(((TiledImageCollection) imageCollection).cutTileFromMegaTile(shadowImage), null, null);
-         } else if (imageCollection instanceof DirectoryImageCollection) {
-         g2d.drawImage(shadowImage, null, null);
-         }
-         this.measureTime("Drop shadow");
-         }
-         */
         // draw this layer into the destination image
-
         BufferedImage tileImage = image.getSubimage(Map.TILE_SIZE, Map.TILE_SIZE, Map.TILE_SIZE, Map.TILE_SIZE);
         g2d.drawImage(tileImage, null, null);
+    }
+
+    /**
+     * Use a grayscale image as alpha channel for another image.
+     */
+    private static BufferedImage alphaChannelFromGrayImage(BufferedImage image,
+            BufferedImage mask, boolean invertMask) {
+
+        image = ImageUtils.convertImageToARGB(image);
+
+        // convert mask to grayscale image if necessary
+        if (mask.getType() != BufferedImage.TYPE_BYTE_GRAY) {
+            System.out.println("!!!! Alpha Mask not in Grayscale Modus !!!!");
+            BufferedImage tmpMask = new BufferedImage(mask.getWidth(),
+                    mask.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+            ColorConvertOp toGray = new ColorConvertOp(null);
+            mask = toGray.filter(mask, tmpMask);
+        }
+
+        // for TYPE_INT_ARGB with a TYPE_BYTE_GRAY mask
+        if (mask.getType() == BufferedImage.TYPE_BYTE_GRAY) {
+            byte ad[] = ((DataBufferByte) mask.getRaster().getDataBuffer()).getData();
+            int d[] = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+            int size = image.getWidth() * image.getHeight();
+            if (invertMask) {
+                for (int i = 0; i < size; i++) {
+                    d[i] = (d[i] & 0xFFFFFF) | ((((int) ad[i]) << 24) ^ 0xff000000);
+                }
+            } else {
+                for (int i = 0; i < size; i++) {
+                    d[i] = (d[i] & 0xFFFFFF) | (((int) ad[i]) << 24);
+                }
+            }
+        }
+        return image;
+    }
+
+    private static BufferedImage solidColorImage(int width, int height, Color color) {
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
+        g2d.setColor(color);
+        g2d.fillRect(0, 0, width, height);
+        g2d.dispose();
+        return image;
     }
 
     /**
@@ -273,9 +330,8 @@ public class Layer {
         this.maskTileSet = maskTileSet;
     }
 
-
     /**
-     * 
+     *
      * @return true if the blend type is normal
      */
     public boolean isBlendingNormal() {
@@ -284,7 +340,7 @@ public class Layer {
 
     /**
      * Setting the blending type.
-     * 
+     *
      * @param blending type
      */
     public void setBlending(BlendType blending) {

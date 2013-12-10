@@ -58,8 +58,10 @@ public class MapTest {
         layer1.setImageTileSet(imageTileSet);
         map.addLayer(layer1);
         
-        
-        BufferedImage result = map.generateTile();
+        int z = 12;
+        int x = 663;
+        int y = 1467;
+        BufferedImage result = map.generateTile(z,x,y);
         try {
             ImageIO.write(result, "png", new File("test/output/testGenerateTileOSM.png"));
         } catch (IOException ex) {
@@ -79,8 +81,10 @@ public class MapTest {
         layer1.setImageTileSet(imageTileSet);
         map.addLayer(layer1);
         
-        
-        BufferedImage result = map.generateTile();
+        int z = 12;
+        int x = 663;
+        int y = 1467;
+        BufferedImage result = map.generateTile(z,x,y);
         try {
             ImageIO.write(result, "png", new File("test/output/testGenerateTileEsri.png"));
         } catch (IOException ex) {
@@ -105,7 +109,10 @@ public class MapTest {
         map.addLayer(layer1);
         map.addLayer(layer2);
         
-        BufferedImage result = map.generateTile();
+        int z = 12;
+        int x = 663;
+        int y = 1467;
+        BufferedImage result = map.generateTile(z, x, y);
         try {
             ImageIO.write(result, "png", new File("test/output/testGenerateTileTwoLayers.png"));
         } catch (IOException ex) {

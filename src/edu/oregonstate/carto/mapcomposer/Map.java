@@ -29,7 +29,7 @@ public class Map {
     public final static int TILE_SIZE = 256;
     private ArrayList<Layer> layers = new ArrayList<>();
 
-    public BufferedImage generateTile() {
+    public BufferedImage generateTile(int z, int x, int y) {
 
         BufferedImage tileImage = new BufferedImage(
                 TILE_SIZE,
@@ -42,9 +42,6 @@ public class Map {
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
 
-        int z = 12;
-        int x = 663;
-        int y = 1467;
         for (Layer layer : layers) {
             if (!layer.isVisible()) {
                 continue;

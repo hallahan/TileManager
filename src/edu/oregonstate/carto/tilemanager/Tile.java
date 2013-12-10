@@ -17,7 +17,9 @@ public abstract class Tile<TileData> {
     /**
      * Tiles are always 256px x 256px.
      */
-    protected final int tileSize = 256;
+    protected final int TILE_SIZE = 256;
+    
+    protected int megaTileSize = TILE_SIZE * 3;
     
     /**
      * A tile needs to be in a set so it can find its neighbors.
@@ -104,6 +106,20 @@ public abstract class Tile<TileData> {
      */
     public int getY() {
         return y;
+    }
+
+    /**
+     * @return the megaTileSize
+     */
+    public int getMegaTileSize() {
+        return megaTileSize;
+    }
+
+    /**
+     * @param megaTileSize the megaTileSize to set
+     */
+    public void setMegaTileSize(int pixels) {
+        this.megaTileSize = pixels;
     }
 
 }
