@@ -17,7 +17,7 @@ public class Cache {
      * singleton method.  This is to be used to prevent many instances of
      * the same cache hanging around.
      */
-    private static Cache singleton = null;
+    private static Cache singleton = new Cache();
     
     private ConcurrentHashMap<String, Tile> map = new ConcurrentHashMap<>();
     
@@ -30,7 +30,6 @@ public class Cache {
      * @return the singleton instance
      */
     public static Cache getInstance() {
-        if (singleton == null) singleton = new Cache();
         return singleton;
     }
     
@@ -49,16 +48,6 @@ public class Cache {
     public Tile get(URL url) {
         Tile tile = map.get(url.toString());
         return tile;
-    }
-    
-    public Tile get(String urlStr) {
-        URL url = null;
-        try {
-            url = new URL(urlStr);
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(Cache.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return get(url);
     }
     
 }

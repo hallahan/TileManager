@@ -128,10 +128,6 @@ public abstract class TileSet {
         }
         return new ImageTile(this, z, x, y);
     }
-    
-    private Tile createTile(TileCoord coord) {
-        return createTile(coord.Z, coord.X, coord.Y);
-    }
 
     /**
      * Gets the tile with the corresponding coordinates from the cache. If not,
